@@ -16,14 +16,17 @@ root.geometry("1920x1080")  # задание размера окна
 # создаем набор вкладок
 notebook = ttk.Notebook()
 notebook.pack(expand=True, fill=BOTH)
-# создаем пару фреймов
+# создаем фреймы
 frame1 = tk.Frame(notebook, bg="white")
 frame2 = tk.Frame(notebook, bg="white")
+frame3 = tk.Frame(notebook, bg="white")
 frame1.pack(fill=BOTH, expand=True)
 frame2.pack(fill=BOTH, expand=True)
+frame3.pack(fill=BOTH, expand=True)
 # добавляем фреймы в качестве вкладок
 notebook.add(frame1, text="Формулировка задачи")
 notebook.add(frame2, text="Программная реализация")
+notebook.add(frame3, text="Наглядный функционал")
 
 task_text_1 = """
 Сосуд для жидкости представляет собой коническую воронку (усеченный конус, коставленный на малый круг в основании)
@@ -76,7 +79,7 @@ label3.place(x=10, y=320)
 
 #фото общего решения
 label_image_2 = tk.Label(frame1, image=photo_2)
-label_image_2.place(x=10, y=395)  # Позиционируем второе изображение ниже текста
+label_image_2.place(x=10, y=395)
 # ------------------------------------------------оформление первого фрейма-------------------------------------------------
 # ------------------------------------------------оформление второго фрейма-------------------------------------------------
 # Значения по умолчанию для каждого параметра
@@ -215,7 +218,7 @@ def calculate():
         N = 100
         x = x0
         v = v0
-        vector_v = [u0, v, 0, 0, 0, 0]#создали вектор для хранения u0- начальная точка, нужная для расчета вспомогательной задачи Коши,v-текущая точка, V- большой шаг, v1_2- первый половинный шаг,v2_2- второй половинный шаг, S- контрольная величина
+        vector_v = [u0, v, 0, 0, 0, 0]#создали вектор для хранения u0- начальная точка, нужная для расчета истинного решения,v-текущая точка, V- большой шаг, v1_2- первый половинный шаг,v2_2- второй половинный шаг, S- контрольная величина
 
         # Списки для хранения значений xi, vi, ui (анализируем и сохраняем аналитическое решение)
         xi_values = [x]
@@ -355,5 +358,81 @@ frame2.grid_columnconfigure(1, weight=1)  # Разрешаем второй ко
 frame2.grid_columnconfigure(2, weight=1)  # Разрешаем третьей колонке растягиваться
 frame2.grid_columnconfigure(3, weight=1)  # Разрешаем четвертой колонке растягиваться
 # ------------------------------------------------Построение графика-------------------------------------------------
+# ------------------------------------------------оформление третьего фрейма-------------------------------------------------
+task_text_4="""
+mainFunction(x, v, sigma, alpha)
+эта функция описывает дифференциальное уравнение
+она нужна для расчёта коэффициентов в методе Рунге-Кутта 
+при "большом" шаге и "половинными" шагами
+"""
+#текст 4
+label4 = tk.Label(frame3, text=task_text_4, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label4.place(x=10, y=10)
+
+#фото исходного ду
+label_image_1 = tk.Label(frame3, image=photo_1)
+label_image_1.place(x=10, y=115)
+
+task_text_5="""
+istResh(x, v0, sigma, alpha)
+эта функция описывает истинное решение исходного ДУ
+"""
+#текст 5
+label5 = tk.Label(frame3, text=task_text_5, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label5.place(x=10, y=215)
+
+#фото общего решения
+image_path_4 = "общее решение3.png"
+image_4 = Image.open(image_path_4)
+image_4 = image_4.resize((285, 96))
+photo_4 = ImageTk.PhotoImage(image_4)
+
+label_image_4 = tk.Label(frame3, image=photo_4)
+label_image_4.place(x=10, y=300)
+
+task_text_6="""
+vector_v
+это вектор содержит: 
+u0- начальная точка, нужная для расчета истинного решения
+v-текущая точка
+V- большой шаг 
+v1_2- первый половинный шаг
+v2_2- второй половинный шаг
+S- контрольная величина
+"""
+#текст 6
+label6 = tk.Label(frame3, text=task_text_6, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label6.place(x=10, y=400)
+
+#фото vector_v
+image_path_5 = "vector_v.png"
+image_5 = Image.open(image_path_5)
+image_5 = image_5.resize((181, 39))
+photo_5 = ImageTk.PhotoImage(image_5)
+
+label_image_5 = tk.Label(frame3, image=photo_5)
+label_image_5.place(x=180, y=410)
+
+task_text_7="""
+bigAndHalfStepForRK3(x, v, h, sigma, alpha)
+В начале функции вектор vector_v зануляется,
+затем функция делает"большой" и "половинные" шаги
+методом Рунге-Кутта 3-го порядка.
+Возвращает vector_v типа [0,0,V,v12,v22,S],
+где S=|vector_v[4]-vector_v[2]|/(2^p-1), p=3-порядок метода"""
+#Текст 7
+label7 = tk.Label(frame3, text=task_text_7, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label7.place(x=500, y=10)
+
+#фото большой и половинные шаги
+image_path_6 = "большойиполовинныйшаг.png"
+image_6 = Image.open(image_path_6)
+image_6 = image_6.resize((474, 268))
+photo_6 = ImageTk.PhotoImage(image_6)
+
+label_image_6 = tk.Label(frame3, image=photo_6)
+label_image_6.place(x=950, y=10)
+
+# ------------------------------------------------оформление третьего фрейма-------------------------------------------------
 
 root.mainloop()
