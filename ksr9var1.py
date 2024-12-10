@@ -89,7 +89,9 @@ default_values = {
     "x0": 0,
     "v0": 2,
     "h": 0.01,
-    "epsilon": 0.0001
+    "epsilon": 0.0001,
+    "N":0,
+    "controlExit":0.001
 }
 
 label_sigma = tk.Label(frame2, text="sigma:", font=("Times New Roman", 10), bg="white")
@@ -127,6 +129,18 @@ entry_epsilon = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_epsilon.insert(0, str(default_values["epsilon"]))  
 label_epsilon.grid(row=5, column=0, sticky="w", padx=5, pady=2)
 entry_epsilon.grid(row=5, column=1, padx=5, pady=2)
+
+label_N = tk.Label(frame2, text="Количество шагов", font=("Times New Roman", 10), bg="white")
+entry_N = tk.Entry(frame2, font=("Times New Roman", 10))
+entry_N.insert(0, str(default_values["N"]))  
+label_N.grid(row=6, column=0, sticky="w", padx=0, pady=1)
+entry_N.grid(row=6, column=1, padx=0, pady=1)
+
+label_controlExit = tk.Label(frame2, text="Контроль выхода за правую границу", font=("Times New Roman", 10), bg="white")
+entry_controlExit = tk.Entry(frame2, font=("Times New Roman", 10))
+entry_controlExit.insert(0, str(default_values["controlExit"]))  
+label_controlExit.grid(row=7, column=0, sticky="w", padx=0, pady=1)
+entry_controlExit.grid(row=7, column=1, padx=0, pady=1)
 # ------------------------------------------------оформление второго фрейма-------------------------------------------------
 # ------------------------------------------------Численные методы-------------------------------------------------
 def mainFunction(x,v,sigma,alpha):
@@ -177,9 +191,7 @@ def bigAndHalfStepForRK3(x,v,h,sigma,alpha):
     vector_v[5]=S
     return vector_v
 
-def methodRK3WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon):
-    c1=0   #счетчик числа деления шага
-    c2=0   #счетчик числа удвоение шага
+def methodRK3WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon,c1,c2):
     vector_v=bigAndHalfStepForRK3(x,v,h,sigma,alpha) 
     S=vector_v[5]
     while (S>=epsilon):
@@ -202,8 +214,14 @@ def methodRK3WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon):
     return result
 # ------------------------------------------------Численные методы-------------------------------------------------
 # ------------------------------------------------Заполнение второго фрейма-------------------------------------------------
+
+
 def calculate():
     try:
+        # Сначала очищаем таблицу
+        for item in treeview.get_children():
+            treeview.delete(item)
+        
         # Получаем значения из полей ввода
         sigma = float(entry_sigma.get())
         alpha = float(entry_alpha.get())
@@ -211,70 +229,121 @@ def calculate():
         v0 = float(entry_v0.get())
         h = float(entry_h.get())
         epsilon = float(entry_epsilon.get())
+        N = int(entry_N.get())
+        controlExit = float(entry_controlExit.get())
 
-        start_vector = [sigma, alpha, x0, v0, h, epsilon]
-        u0 = v0  # Начальное значение для ui
+        c1 = 0   # счетчик числа деления шага
+        c2 = 0   # счетчик числа удвоение шага
+
+        # Начальные условия
+        start_vector = [sigma, alpha, x0, v0, h, epsilon, N, controlExit]
+        u0 = v0  # Начальное значение для u0
+
+        # Добавляем начальную строку в таблицу
         treeview.insert("", "end", values=("0", x0, v0, "", "", "", "0", "0", u0, "0"))
-        N = 100
         x = x0
         v = v0
-        vector_v = [u0, v, 0, 0, 0, 0]#создали вектор для хранения u0- начальная точка, нужная для расчета истинного решения,v-текущая точка, V- большой шаг, v1_2- первый половинный шаг,v2_2- второй половинный шаг, S- контрольная величина
-
-        # Списки для хранения значений xi, vi, ui (анализируем и сохраняем аналитическое решение)
+        vector_v = [u0, v, 0, 0, 0, 0]  # Вектор для хранения значений
         xi_values = [x]
         vi_values = [v]
-        ui_values = [istResh(x, u0, sigma, alpha)]  # Сохраняем начальное значение ui
+        ui_values = [istResh(x, u0, sigma, alpha)]  # Начальное значение ui
 
-        for i in range(1, N + 1):
-            result = methodRK3WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon)
-            x, vector_v, h, c1, c2 = result
-            xi = x
-            vi = vector_v[1]
-            v2i = vector_v[4]
-            hi = h
-            OLP = abs(v2i - vi)
-            c1_val = c1
-            c2_val = c2
-            ui = istResh(x, v0, sigma, alpha)  # Аналитическое решение
-            Ei = abs(vi - ui)
-             # Форматируем значения с точностью до 5 знаков после запятой
-            treeview.insert("", "end", values=(
-                f"{i:5}",  # Столбец i, 5 знаков
-                f"{xi:.5f}",  # Столбец xi, 5 знаков после запятой
-                f"{vi:.16f}",  # Столбец vi, 5 знаков после запятой
-                f"{v2i:.15f}",  # Столбец v2i, 5 знаков после запятой
-                f"{hi:.5f}",  # Столбец hi, 5 знаков после запятой
-                f"{OLP:.16f}",  # Столбец OLP, 5 знаков после запятой
-                f"{c1_val:.0f}",  # Столбец c1, 5 знаков после запятой
-                f"{c2_val:.0f}",  # Столбец c2, 5 знаков после запятой
-                f"{ui:.16f}",  # Столбец ui, 5 знаков после запятой
-                f"{Ei:.16f}"   # Столбец Ei, 5 знаков после запятой
-            ))
+        # Условие для N!=0 (фиксированное количество шагов)
+        if (N > 0 and controlExit != 0):
+            for i in range(1, N + 1):
+                result = methodRK3WithLocalErrorControl(x, v, h, N, sigma, alpha, epsilon, c1, c2)
+                x, vector_v, h, c1, c2 = result
+                xi = x
+                vi = vector_v[1]
+                v2i = vector_v[4]
+                hi = h
+                OLP = abs(v2i - vi)
+                ui = istResh(x, v0, sigma, alpha)
+                Ei = abs(vi - ui)
 
-            # Добавляем значения в списки для графика
-            xi_values.append(xi)
-            vi_values.append(vi)
-            ui_values.append(ui)
+                # Вставляем новые строки в таблицу
+                treeview.insert("", "end", values=(
+                    f"{i:5}",
+                    f"{xi:.5f}",
+                    f"{vi:.16f}",
+                    f"{v2i:.15f}",
+                    f"{hi:.16f}",
+                    f"{OLP:.16f}",
+                    f"{c1:.0f}",
+                    f"{c2:.0f}",
+                    f"{ui:.16f}",
+                    f"{Ei:.16f}"
+                ))
 
-            v=vector_v[1]
-            vector_v = [u0, v, 0, 0, 0, 0]
-            x = x + h  # Обновляем x
+                # Добавляем данные для графика
+                xi_values.append(xi)
+                vi_values.append(vi)
+                ui_values.append(ui)
+
+                # Обновляем переменные для следующего шага
+                v = vector_v[1]
+                vector_v = [u0, v, 0, 0, 0, 0]
+                x = x + h
+
+        # Условие для N == 0 (шаги до достижения controlExit)
+        elif N == 0:
+            vi = 10000000  # Начальное значение vi, которое явно больше controlExit
+            i = 0  # Счетчик шагов
+            while vi > controlExit:
+                i += 1
+                result = methodRK3WithLocalErrorControl(x, v, h, 1, sigma, alpha, epsilon, c1, c2)
+                x, vector_v, h, c1, c2 = result
+                xi = x
+                vi = vector_v[1]
+                v2i = vector_v[4]
+                hi = h
+                OLP = abs(v2i - vi)
+                ui = istResh(x, v0, sigma, alpha)
+                Ei = abs(vi - ui)
+
+                # Вставляем новые строки в таблицу
+                treeview.insert("", "end", values=(
+                    f"{i:5}",
+                    f"{xi:.5f}",
+                    f"{vi:.16f}",
+                    f"{v2i:.15f}",
+                    f"{hi:.16f}",
+                    f"{OLP:.16f}",
+                    f"{c1:.0f}",
+                    f"{c2:.0f}",
+                    f"{ui:.16f}",
+                    f"{Ei:.16f}"
+                ))
+
+                # Добавляем данные для графика
+                xi_values.append(xi)
+                vi_values.append(vi)
+                ui_values.append(ui)
+
+                # Обновляем переменные для следующего шага
+                v = vector_v[1]
+                vector_v = [u0, v, 0, 0, 0, 0]
+                x = x + h
 
         # Сохраняем данные для построения графика
         plot_graph.xi_values = xi_values
         plot_graph.vi_values = vi_values
         plot_graph.ui_values = ui_values
 
+        # Строим график
         plot_graph(xi_values, vi_values, ui_values)
+
         return 1
 
     except ValueError:
         print("Ошибка: Пожалуйста, убедитесь, что все поля заполнены корректно.")
         return None
 
+
+
 # кнопка для запуска вычислений
 button_calculate = tk.Button(frame2, text="Начать расчёт", font=("Times New Roman", 10), command=calculate)
-button_calculate.grid(row=6, column=0, columnspan=2, pady=10)
+button_calculate.grid(row=7, column=2, columnspan=1, pady=10)
 
 # Создаем вертикальную полосу прокрутки
 y_scrollbar = tk.Scrollbar(frame2, orient="vertical")
@@ -347,9 +416,6 @@ def plot_graph(xi_values, vi_values, ui_values):
 frame_graph = tk.Frame(frame2, bg="white")
 frame_graph.grid(row=8, column=0, columnspan=4, padx=20, pady=10, sticky="nsew")
 
-# Кнопка для построения графика
-button_plot = tk.Button(frame2, text="Построить график", font=("Times New Roman", 10), command=plot_graph)
-button_plot.grid(row=7, column=2, columnspan=2, pady=10)
 
 # Убедитесь, что окна с графиком также растягиваются
 frame2.grid_rowconfigure(8, weight=1)  # Разрешаем строке с графиком растягиваться
@@ -366,7 +432,7 @@ mainFunction(x, v, sigma, alpha)
 при "большом" шаге и "половинными" шагами
 """
 #текст 4
-label4 = tk.Label(frame3, text=task_text_4, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label4 = tk.Label(frame3, text=task_text_4, justify=tk.LEFT, font=("Times New Roman", 12), padx=5, pady=2, bg="white")
 label4.place(x=10, y=10)
 
 #фото исходного ду
@@ -378,7 +444,7 @@ istResh(x, v0, sigma, alpha)
 эта функция описывает истинное решение исходного ДУ
 """
 #текст 5
-label5 = tk.Label(frame3, text=task_text_5, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label5 = tk.Label(frame3, text=task_text_5, justify=tk.LEFT, font=("Times New Roman", 12), padx=5, pady=2, bg="white")
 label5.place(x=10, y=215)
 
 #фото общего решения
@@ -401,7 +467,7 @@ v2_2- второй половинный шаг
 S- контрольная величина
 """
 #текст 6
-label6 = tk.Label(frame3, text=task_text_6, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label6 = tk.Label(frame3, text=task_text_6, justify=tk.LEFT, font=("Times New Roman", 12), padx=5, pady=2, bg="white")
 label6.place(x=10, y=400)
 
 #фото vector_v
@@ -421,7 +487,7 @@ bigAndHalfStepForRK3(x, v, h, sigma, alpha)
 Возвращает vector_v типа [0,0,V,v12,v22,S],
 где S=|vector_v[4]-vector_v[2]|/(2^p-1), p=3-порядок метода"""
 #Текст 7
-label7 = tk.Label(frame3, text=task_text_7, justify=tk.LEFT, font=("Times New Roman", 12), padx=20, pady=5, bg="white")
+label7 = tk.Label(frame3, text=task_text_7, justify=tk.LEFT, font=("Times New Roman", 12), padx=5, pady=2, bg="white")
 label7.place(x=500, y=10)
 
 #фото большой и половинные шаги
