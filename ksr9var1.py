@@ -23,6 +23,11 @@ frame3 = tk.Frame(notebook, bg="white")
 frame1.pack(fill=BOTH, expand=True)
 frame2.pack(fill=BOTH, expand=True)
 frame3.pack(fill=BOTH, expand=True)
+# Создаю 7 колоннок для второго фрейма
+for i in range(8):
+    frame2.grid_columnconfigure(i, weight=1)
+
+
 # добавляем фреймы в качестве вкладок
 notebook.add(frame1, text="Формулировка задачи")
 notebook.add(frame2, text="Программная реализация")
@@ -97,51 +102,63 @@ default_values = {
 label_sigma = tk.Label(frame2, text="sigma:", font=("Times New Roman", 10), bg="white")
 entry_sigma = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_sigma.insert(0, str(default_values["sigma"]))  
-label_sigma.grid(row=0, column=0, sticky="w", padx=5, pady=2)
-entry_sigma.grid(row=0, column=1, padx=5, pady=2)
+label_sigma.grid(row=0, column=0, sticky="w", padx=5, pady=0)
+entry_sigma.grid(row=0, column=1, padx=5, pady=0)
 
 label_alpha = tk.Label(frame2, text="alpha:", font=("Times New Roman", 10), bg="white")
 entry_alpha = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_alpha.insert(0, str(default_values["alpha"])) 
-label_alpha.grid(row=1, column=0, sticky="w", padx=5, pady=2)
-entry_alpha.grid(row=1, column=1, padx=5, pady=2)
+label_alpha.grid(row=1, column=0, sticky="w", padx=5, pady=0)
+entry_alpha.grid(row=1, column=1, padx=5, pady=0)
 
 label_x0 = tk.Label(frame2, text="x0:", font=("Times New Roman", 10), bg="white")
 entry_x0 = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_x0.insert(0, str(default_values["x0"])) 
-label_x0.grid(row=2, column=0, sticky="w", padx=5, pady=2)
-entry_x0.grid(row=2, column=1, padx=5, pady=2)
+label_x0.grid(row=2, column=0, sticky="w", padx=5, pady=0)
+entry_x0.grid(row=2, column=1, padx=5, pady=0)
 
 label_v0 = tk.Label(frame2, text="v0:", font=("Times New Roman", 10), bg="white")
 entry_v0 = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_v0.insert(0, str(default_values["v0"]))  
-label_v0.grid(row=3, column=0, sticky="w", padx=5, pady=2)
-entry_v0.grid(row=3, column=1, padx=5, pady=2)
+label_v0.grid(row=3, column=0, sticky="w", padx=5, pady=0)
+entry_v0.grid(row=3, column=1, padx=5, pady=0)
 
 label_h = tk.Label(frame2, text="h:", font=("Times New Roman", 10), bg="white")
 entry_h = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_h.insert(0, str(default_values["h"])) 
-label_h.grid(row=4, column=0, sticky="w", padx=5, pady=2)
-entry_h.grid(row=4, column=1, padx=5, pady=2)
+label_h.grid(row=4, column=0, sticky="w", padx=5, pady=0)
+entry_h.grid(row=4, column=1, padx=5, pady=0)
 
 label_epsilon = tk.Label(frame2, text="epsilon:", font=("Times New Roman", 10), bg="white")
 entry_epsilon = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_epsilon.insert(0, str(default_values["epsilon"]))  
-label_epsilon.grid(row=5, column=0, sticky="w", padx=5, pady=2)
-entry_epsilon.grid(row=5, column=1, padx=5, pady=2)
+label_epsilon.grid(row=5, column=0, sticky="w", padx=5, pady=0)
+entry_epsilon.grid(row=5, column=1, padx=5, pady=0)
 
 label_N = tk.Label(frame2, text="Количество шагов", font=("Times New Roman", 10), bg="white")
 entry_N = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_N.insert(0, str(default_values["N"]))  
-label_N.grid(row=6, column=0, sticky="w", padx=0, pady=1)
-entry_N.grid(row=6, column=1, padx=0, pady=1)
+label_N.grid(row=6, column=0, sticky="w", padx=5, pady=0)
+entry_N.grid(row=6, column=1, padx=5, pady=0)
 
 label_controlExit = tk.Label(frame2, text="Контроль выхода за правую границу", font=("Times New Roman", 10), bg="white")
 entry_controlExit = tk.Entry(frame2, font=("Times New Roman", 10))
 entry_controlExit.insert(0, str(default_values["controlExit"]))  
-label_controlExit.grid(row=7, column=0, sticky="w", padx=0, pady=1)
-entry_controlExit.grid(row=7, column=1, padx=0, pady=1)
-# ------------------------------------------------оформление второго фрейма-------------------------------------------------
+label_controlExit.grid(row=7, column=0, sticky="w", padx=5, pady=0)
+entry_controlExit.grid(row=7, column=1, padx=5, pady=0)
+
+# ------------------------------------------------создание меню для выбора метода-------------------------------------------------
+# Создаем меню для выбора метода
+label_method = tk.Label(frame2, text="Выберите метод:", font=("Times New Roman", 10), bg="white")
+method_options = ["РК3", "РК4"]
+method_combobox = ttk.Combobox(frame2, values=method_options, state="readonly", font=("Times New Roman", 10))
+method_combobox.set("РК3")  # Значение по умолчанию
+
+# Размещение элементов в 3-й и 4-й колонках
+label_method.grid(row=8, column=0, sticky="w", padx=5, pady=5)  # Размещаем label в 3-й колонке
+method_combobox.grid(row=8, column=1, sticky="w",padx=0, pady=5)  # Размещаем combobox в 4-й колонке
+# ------------------------------------------------создание меню для выбора метода-------------------------------------------------
+
 # ------------------------------------------------Численные методы-------------------------------------------------
 def mainFunction(x,v,sigma,alpha):
     alpha_in_radians = np.deg2rad(alpha)
@@ -178,11 +195,11 @@ def bigAndHalfStepForRK3(x,v,h,sigma,alpha):
     v_1_2 = v + h / 2 * (k12 / 4 + 3 * k22 / 4) #получили значение v_1_2 для первого половинного шага
     vector_v[3] = v_1_2
 
-	#второй половинный шаг
+    #второй половинный шаг
     x_2_2 = x_1_2 + h / 2
-    k12 = mainFunction(x_2_2, v, sigma, alpha)
-    k22 = mainFunction(x_2_2 + h / 6, v + h / 6 * k12, sigma, alpha)
-    k32 = mainFunction(x_2_2 + h / 3, v + h / 3 * k22, sigma, alpha)
+    k12 = mainFunction(x_2_2, v_1_2, sigma, alpha)
+    k22 = mainFunction(x_2_2 + h / 6, v_1_2 + h / 6 * k12, sigma, alpha)
+    k32 = mainFunction(x_2_2 + h / 3, v_1_2 + h / 3 * k22, sigma, alpha)
     v_2_2 = v_1_2 + h / 2 * (k12 / 4 + 3 *k22 / 4) #получили значение v_2_2 для второго половинного шага
     vector_v[4] = v_2_2
 
@@ -212,17 +229,76 @@ def methodRK3WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon,c1,c2):
         vector_v[1]=vector_v[2]
     result=[x,vector_v,h,c1,c2]
     return result
+
+def bigAndHalfStepForRK4(x,v,h,sigma,alpha):
+    X=x+h
+    vector_v=[0,0,0,0,0,0]
+    k1 = mainFunction(X,v,sigma,alpha)
+    k2 = mainFunction(X + h / 2, v + h / 2 * k1, sigma, alpha)
+    k3 = mainFunction(X + h / 2, v + h / 2 * k2, sigma, alpha)
+    k4 = mainFunction(X+h,v+h*k3)
+
+    V = v + h/6 * (k1+2*k2+2*k3+k4) #получили значение V для большого шага
+    vector_v[2]=V
+    #первый половинный шаг
+    x_1_2 = x + h / 2
+    k12 = mainFunction(x_1_2, v, sigma, alpha)
+    k21 = mainFunction(x_1_2 + h / 4, v + h / 4 * k1, sigma, alpha)
+    k31 = mainFunction(x_1_2 + h / 4, v + h / 4 * k2, sigma, alpha)
+    k41 = mainFunction(x_1_2+h/2,v+h/2*k3)
+    
+    v_1_2 = v + h / 12 * (k1+2*k2+2*k3+k4) #получили значение v_1_2 для первого половинного шага
+    vector_v[3] = v_1_2
+
+    #второй половинный шаг
+    x_2_2 = x_1_2 + h / 2
+    k12 = mainFunction(x_2_2, v_1_2, sigma, alpha)
+    k22 = mainFunction(x_2_2 + h / 4, v_1_2 + h / 4 * k12, sigma, alpha)
+    k32 = mainFunction(x_2_2 + h / 4, v_1_2 + h / 4 * k22, sigma, alpha)
+    v_2_2 = v_1_2 + h / 2 * (k1+2*k2+2*k3+k4) #получили значение v_2_2 для второго половинного шага
+    vector_v[4] = v_2_2
+
+    #контрольная величина S
+    S = abs(vector_v[2] - vector_v[4]) / 7
+    vector_v[5]=S
+    return vector_v
+
+def methodRK4WithLocalErrorControl(x,v,h,N,sigma,alpha,epsilon,c1,c2):
+    vector_v=bigAndHalfStepForRK4(x,v,h,sigma,alpha) 
+    S=vector_v[5]
+    while (S>=epsilon):
+        #деление шага
+        h=h/2
+        c1=c1+1
+        #пересчет точки
+        vector_v=bigAndHalfStepForRK4(x,v,h,sigma,alpha)  
+        S=vector_v[5]
+    if ((epsilon/9 <=S) and (S<=epsilon)):
+        #не меняем шаг, принимаем точку
+        vector_v[1]=vector_v[2]
+    if (S<epsilon/9):
+        #удвоение шага
+        h=2*h
+        c2=c2+1
+        #принимаем точку, удваивая шаг
+        vector_v[1]=vector_v[2]
+    result=[x,vector_v,h,c1,c2]
+    return result
+
 # ------------------------------------------------Численные методы-------------------------------------------------
 # ------------------------------------------------Заполнение второго фрейма-------------------------------------------------
-
-
 def calculate():
     try:
-        # Сначала очищаем таблицу
+        # Очищаем таблицу
         for item in treeview.get_children():
             treeview.delete(item)
-        
-        # Получаем значения из полей ввода
+
+        plt.clf()  # Очистить график
+        plot_graph.xi_values = []
+        plot_graph.vi_values = []
+        plot_graph.ui_values = []
+
+        # Считываем новые значения из полей ввода
         sigma = float(entry_sigma.get())
         alpha = float(entry_alpha.get())
         x0 = float(entry_x0.get())
@@ -236,7 +312,6 @@ def calculate():
         c2 = 0   # счетчик числа удвоение шага
 
         # Начальные условия
-        start_vector = [sigma, alpha, x0, v0, h, epsilon, N, controlExit]
         u0 = v0  # Начальное значение для u0
 
         # Добавляем начальную строку в таблицу
@@ -248,8 +323,8 @@ def calculate():
         vi_values = [v]
         ui_values = [istResh(x, u0, sigma, alpha)]  # Начальное значение ui
 
-        # Условие для N!=0 (фиксированное количество шагов)
-        if (N > 0 and controlExit != 0):
+        # Условие для N != 0 (фиксированное количество шагов)
+        if (N != 0 and controlExit == 0):
             for i in range(1, N + 1):
                 result = methodRK3WithLocalErrorControl(x, v, h, N, sigma, alpha, epsilon, c1, c2)
                 x, vector_v, h, c1, c2 = result
@@ -266,7 +341,7 @@ def calculate():
                     f"{i:5}",
                     f"{xi:.5f}",
                     f"{vi:.16f}",
-                    f"{v2i:.15f}",
+                    f"{v2i:.16f}",
                     f"{hi:.16f}",
                     f"{OLP:.16f}",
                     f"{c1:.0f}",
@@ -286,7 +361,7 @@ def calculate():
                 x = x + h
 
         # Условие для N == 0 (шаги до достижения controlExit)
-        elif N == 0:
+        elif N == 0 and controlExit != 0:
             vi = 10000000  # Начальное значение vi, которое явно больше controlExit
             i = 0  # Счетчик шагов
             while vi > controlExit:
@@ -306,7 +381,7 @@ def calculate():
                     f"{i:5}",
                     f"{xi:.5f}",
                     f"{vi:.16f}",
-                    f"{v2i:.15f}",
+                    f"{v2i:.16f}",
                     f"{hi:.16f}",
                     f"{OLP:.16f}",
                     f"{c1:.0f}",
@@ -340,10 +415,9 @@ def calculate():
         return None
 
 
-
 # кнопка для запуска вычислений
 button_calculate = tk.Button(frame2, text="Начать расчёт", font=("Times New Roman", 10), command=calculate)
-button_calculate.grid(row=7, column=2, columnspan=1, pady=10)
+button_calculate.grid(row=7, column=4, columnspan=1, pady=10)
 
 # Создаем вертикальную полосу прокрутки
 y_scrollbar = tk.Scrollbar(frame2, orient="vertical")
@@ -376,17 +450,19 @@ treeview.column("ui", width=150)
 treeview.column("Ei", width=150)
 
 # Размещение таблицы справа от полей ввода
-treeview.grid(row=0, column=2, rowspan=7, padx=20, pady=10)
+treeview.grid(row=0, column=2, columnspan=6, rowspan=7, padx=5, pady=5)  # Помещаем таблицу в первые 5 колонок
 
 # Размещение вертикальной полосы прокрутки
-y_scrollbar.grid(row=0, column=3, rowspan=7, sticky="ns")
+y_scrollbar.grid(row=0, column=8, rowspan=7, sticky="ns")  # Прокрутка в 8-й колонке
 y_scrollbar.config(command=treeview.yview)
+
+treeview.configure(yscrollcommand=y_scrollbar.set)
 
 # ------------------------------------------------Построение графика-------------------------------------------------
 def plot_graph(xi_values, vi_values, ui_values):
 
     # Создаем фигуру и оси для графика
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5))
 
     # Строим график зависимости vi от xi с синими точками (численное решение)
     ax.plot(xi_values, vi_values, label="vi(xi) - численное решение", color="b", marker="o", markersize=2)
@@ -414,15 +490,16 @@ def plot_graph(xi_values, vi_values, ui_values):
 
 # Размещение фрейма для графика с использованием grid
 frame_graph = tk.Frame(frame2, bg="white")
-frame_graph.grid(row=8, column=0, columnspan=4, padx=20, pady=10, sticky="nsew")
+frame_graph.grid(row=9, column=0, columnspan=8, rowspan=4, padx=0, pady=0, sticky="nsew")
+
+frame2.grid_rowconfigure(9, weight=1)  # Даем вес 1 для строки с графиком
+frame2.grid_columnconfigure(0, weight=1)  # Даем вес 1 для первой колонки
+frame2.grid_columnconfigure(1, weight=1)  # Даем вес 1 для второй колонки
+frame2.grid_columnconfigure(2, weight=2)  # Даем вес 2 для колонок с таблицей (чтобы они были шире)
+frame2.grid_columnconfigure(3, weight=2)  # для остальных колонок таблицы, если нужно
+frame2.grid_columnconfigure(4, weight=2)  # и т.д. для нужных колонок
 
 
-# Убедитесь, что окна с графиком также растягиваются
-frame2.grid_rowconfigure(8, weight=1)  # Разрешаем строке с графиком растягиваться
-frame2.grid_columnconfigure(0, weight=1)  # Разрешаем первой колонке растягиваться
-frame2.grid_columnconfigure(1, weight=1)  # Разрешаем второй колонке растягиваться
-frame2.grid_columnconfigure(2, weight=1)  # Разрешаем третьей колонке растягиваться
-frame2.grid_columnconfigure(3, weight=1)  # Разрешаем четвертой колонке растягиваться
 # ------------------------------------------------Построение графика-------------------------------------------------
 # ------------------------------------------------оформление третьего фрейма-------------------------------------------------
 task_text_4="""
@@ -502,3 +579,5 @@ label_image_6.place(x=950, y=10)
 # ------------------------------------------------оформление третьего фрейма-------------------------------------------------
 
 root.mainloop()
+
+

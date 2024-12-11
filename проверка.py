@@ -1,4 +1,4 @@
-import tkinter as tk
+"""import tkinter as tk
 
 def toggle_boundary_field(event):
     if step_option.get() == "Контроль выхода за границу":
@@ -37,4 +37,60 @@ boundary_entry = tk.Entry(root)
 step_option.trace("w", toggle_boundary_field)
 
 # Запуск главного цикла приложения
+root.mainloop()
+
+import tkinter as tk
+from tkinter import ttk
+
+root = tk.Tk()
+root.title("Tk dropdown example")
+
+# Добавляем сетку
+mainframe = tk.Frame(root)
+mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+mainframe.columnconfigure(0, weight=1)
+mainframe.rowconfigure(0, weight=1)
+mainframe.pack(pady=100, padx=100)
+
+# Создаём переменную Tkinter
+tkvar = tk.StringVar(root)
+
+# Список с вариантами
+choices = ['Пицца', 'Лазанья', 'Фри', 'Рыба', 'Картофель']
+tkvar.set('Пицца')  # задаём вариант по умолчанию
+
+popupMenu = tk.OptionMenu(mainframe, tkvar, *choices)
+tk.Label(mainframe, text="Choose a dish").grid(row=1, column=0)
+popupMenu.grid(row=2, column=0)
+
+# При изменении значения выпадающего меню
+def change_dropdown(*args):
+    print(tkvar.get())
+
+# Связываем функцию для изменения выпадающего меню
+tkvar.trace('w', change_dropdown)
+
+root.mainloop()"""
+
+from tkinter import *
+ 
+root = Tk()
+root.title("METANIT.COM")
+root.geometry("250x150") 
+ 
+main_menu = Menu()
+ 
+file_menu = Menu()
+file_menu.add_command(label="New")
+file_menu.add_command(label="Save")
+file_menu.add_command(label="Open")
+file_menu.add_separator()
+file_menu.add_command(label="Exit")
+ 
+main_menu.add_cascade(label="File", menu=file_menu)
+main_menu.add_cascade(label="Edit")
+main_menu.add_cascade(label="View")
+ 
+root.config(menu=main_menu)
+ 
 root.mainloop()
